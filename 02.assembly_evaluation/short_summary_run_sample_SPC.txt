@@ -1,0 +1,15 @@
+# BUSCO version is: 3.0.2 
+# The lineage dataset is: N/A (Creation date: N/A, number of species: N/A, number of BUSCOs: N/A)
+# To reproduce this run: python /busco/scripts/run_BUSCO.py -i SPC1_trinity.okay.fasta -o run_sample_SPC -l plantae/ -m transcriptome -c 4
+#
+# Summarized benchmarking in BUSCO notation for file SPC1_trinity.okay.fasta
+# BUSCO was run in mode: transcriptome
+
+	C:95.0%[S:48.6%,D:46.4%],F:2.4%,M:2.6%,n:956
+
+	909	Complete BUSCOs (C)
+	465	Complete and single-copy BUSCOs (S)
+	444	Complete and duplicated BUSCOs (D)
+	23	Fragmented BUSCOs (F)
+	24	Missing BUSCOs (M)
+	956	Total BUSCO groups searched

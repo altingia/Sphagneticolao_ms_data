@@ -1,0 +1,28 @@
+library(edgeR)
+library(DESeq2)
+
+data = read.table("/home/wuwei/Sphagneticola/cold_treatment/kallisto/Expression/Trinity_trans_SPC.isoform.counts.matrix", header=T, row.names=1, com='')
+col_ordering = c(1,2,3,4)
+rnaseqMatrix = data[,col_ordering]
+rnaseqMatrix = round(rnaseqMatrix)
+rnaseqMatrix = rnaseqMatrix[rowSums(cpm(rnaseqMatrix) > 1) >= 2,]
+conditions = data.frame(conditions=factor(c(rep("T1", 2), rep("T2", 2))))
+rownames(conditions) = colnames(rnaseqMatrix)
+ddsFullCountTable <- DESeqDataSetFromMatrix(
+    countData = rnaseqMatrix,
+    colData = conditions,
+    design = ~ conditions)
+dds = DESeq(ddsFullCountTable)
+contrast=c("conditions","T1","T2")
+res = results(dds, contrast)
+baseMeanA <- rowMeans(counts(dds, normalized=TRUE)[,colData(dds)$conditions == "T1"])
+baseMeanB <- rowMeans(counts(dds, normalized=TRUE)[,colData(dds)$conditions == "T2"])
+res = cbind(baseMeanA, baseMeanB, as.data.frame(res))
+res = cbind(sampleA="T1", sampleB="T2", as.data.frame(res))
+res$padj[is.na(res$padj)]  <- 1
+write.table(as.data.frame(res[order(res$pvalue),]), file='Trinity_trans_SPC.isoform.counts.matrix.T1_vs_T2.DESeq2.DE_results', sep='	', quote=FALSE)
+write.table(rnaseqMatrix, file='Trinity_trans_SPC.isoform.counts.matrix.T1_vs_T2.DESeq2.count_matrix', sep='	', quote=FALSE)
+source("/home/wuwei/anaconda2/opt/trinity-2.5.1/Analysis/DifferentialExpression/R/rnaseq_plot_funcs.R")
+pdf("Trinity_trans_SPC.isoform.counts.matrix.T1_vs_T2.DESeq2.DE_results.MA_n_Volcano.pdf")
+plot_MA_and_Volcano(rownames(res), log2(res$baseMean+1), res$log2FoldChange, res$padj)
+dev.off()

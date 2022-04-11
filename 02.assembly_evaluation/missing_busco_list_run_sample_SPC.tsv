@@ -1,0 +1,28 @@
+# BUSCO version is: 3.0.2 
+# The lineage dataset is: N/A (Creation date: N/A, number of species: N/A, number of BUSCOs: N/A)
+# To reproduce this run: python /busco/scripts/run_BUSCO.py -i SPC1_trinity.okay.fasta -o run_sample_SPC -l plantae/ -m transcriptome -c 4
+#
+11627
+13837
+16068
+17965
+20871
+2376
+26307
+29182
+30905
+32447
+33257
+35689
+38854
+39549
+42843
+43660
+4399
+48896
+60479
+63440
+8051
+82385
+88052
+9798

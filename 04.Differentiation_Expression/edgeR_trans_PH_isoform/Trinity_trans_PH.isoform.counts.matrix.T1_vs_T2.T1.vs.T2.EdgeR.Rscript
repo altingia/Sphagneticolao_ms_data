@@ -1,0 +1,24 @@
+library(edgeR)
+
+data = read.table("/home/wuwei/Sphagneticola/cold_treatment/kallisto/Expression/Trinity_trans_PH.isoform.counts.matrix", header=T, row.names=1, com='')
+col_ordering = c(1,2,3,4,5)
+rnaseqMatrix = data[,col_ordering]
+rnaseqMatrix = round(rnaseqMatrix)
+rnaseqMatrix = rnaseqMatrix[rowSums(cpm(rnaseqMatrix) > 1) >= 2,]
+conditions = factor(c(rep("T1", 2), rep("T2", 3)))
+
+exp_study = DGEList(counts=rnaseqMatrix, group=conditions)
+exp_study = calcNormFactors(exp_study)
+exp_study = estimateCommonDisp(exp_study)
+exp_study = estimateTagwiseDisp(exp_study)
+et = exactTest(exp_study, pair=c("T1", "T2"))
+tTags = topTags(et,n=NULL)
+result_table = tTags$table
+result_table = data.frame(sampleA="T1", sampleB="T2", result_table)
+result_table$logFC = -1 * result_table$logFC
+write.table(result_table, file='Trinity_trans_PH.isoform.counts.matrix.T1_vs_T2.edgeR.DE_results', sep='	', quote=F, row.names=T)
+write.table(rnaseqMatrix, file='Trinity_trans_PH.isoform.counts.matrix.T1_vs_T2.edgeR.count_matrix', sep='	', quote=F, row.names=T)
+source("/home/wuwei/anaconda2/opt/trinity-2.5.1/Analysis/DifferentialExpression/R/rnaseq_plot_funcs.R")
+pdf("Trinity_trans_PH.isoform.counts.matrix.T1_vs_T2.edgeR.DE_results.MA_n_Volcano.pdf")
+plot_MA_and_Volcano(rownames(result_table), result_table$logCPM, result_table$logFC, result_table$FDR)
+dev.off()
